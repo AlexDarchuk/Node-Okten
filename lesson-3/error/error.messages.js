@@ -22,5 +22,9 @@ module.exports = {
     USER_IS_DELETE: {
         en: 'User is delete',
         ua: 'Користувач видалений'
-    }
-}
+    },
+    NO_RESULT_FOUND: {
+        en: 'Cant find user in database',
+        ua: 'Користувача не було знайдено',
+    },
+};

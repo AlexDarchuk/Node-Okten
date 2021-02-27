@@ -1,36 +1,65 @@
 const fs = require('fs');
 const path = require('path');
+const { promisify } = require('util');
 
-const dataUsers = path.join(process.cwd(), 'dataBase', 'users.json')
+const errorMessage = require('../error/error.messages');
 
-let users = [];
-const readUsers = (dataUsers) => {
-    fs.readFile(dataUsers, (err, data) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        users = JSON.parse(data.toString());
-    })
-}
-readUsers(dataUsers);
+const dataUsers = path.join(process.cwd(), 'dataBase', 'users.json');
 
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 
 module.exports = {
-    findUsers: () => {
-        return users;
+    findUsers: async (preferL, query) => {
+        const readUsers = await readFile(dataUsers);
+
+        const usersDb = await JSON.parse(readUsers.toString());
+        const { nickname } = query;
+
+        if (!nickname) {
+            return usersDb;
+        }
+
+        const user = usersDb.find((userF) => userF.nickname === nickname);
+
+        if (!user) {
+            throw new Error(errorMessage.NO_RESULT_FOUND[preferL]);
+        }
+
+        return user;
     },
 
-    findUserById: (userId) => {
-        return users[userId];
+    findUserById: async (userId, preferL) => {
+        const readUsers = await readFile(dataUsers);
+
+        const usersDb = await JSON.parse(readUsers.toString())[userId];
+
+        if (!usersDb) {
+            throw new Error(errorMessage.NO_RESULT_FOUND[preferL]);
+        }
+
+        return usersDb;
     },
 
-    createUser: (userObject) => {
-        users.push(userObject);
+    createUser: async (userBody, preferL) => {
+        const readUsers = await readFile(dataUsers);
+
+        const usersDb = JSON.parse(readUsers.toString());
+
+        if (usersDb.find((user) => user.nickname === userBody.nickname)) {
+            throw new Error(errorMessage.NO_RESULT_FOUND[preferL]);
+        }
+        usersDb.push(userBody);
+        await writeFile(dataUsers, JSON.stringify(usersDb));
     },
 
-    deleteUser: (userId) => {
-        return users.slice(userId, 1);
+    deleteUser: async (userId) => {
+        const readUsers = await readFile(dataUsers);
+
+        const usersDb = JSON.parse(readUsers.toString());
+
+        usersDb.splice(userId, 1);
+        await writeFile(dataUsers, JSON.stringify(usersDb));
     }
 
-}
+};

@@ -3,44 +3,52 @@ const errorCodes = require('../constant/errorCodes.enum');
 const errorMessages = require('../error/error.messages');
 
 module.exports = {
-    getAllUsers: (req, res) => {
+    getAllUsers: async (req, res) => {
         try {
-            const users = userService.findUsers();
-            res.json(users);
+            const { preferL = 'en' } = req.body;
+
+            const users = await userService.findUsers(preferL, req.query);
+
+            res.status(errorCodes.OK).json(users);
         } catch (error) {
             res.status(errorCodes.BAD_REQUEST).json(error.message);
         }
     },
 
-    getOneUser: (req, res) => {
-       try {
-            const {userId} = req.params;
-            const user = userService.findUserById(userId);
+    getOneUser: async (req, res) => {
+        try {
+            const { userId } = req.params;
+            const { preferL = 'en' } = req.body;
 
-            res.json(user);
-       } catch (error) {
+            const user = await userService.findUserById(userId, preferL);
+
+            res.status(errorCodes.OK).json(user);
+        } catch (error) {
             res.status(errorCodes.BAD_REQUEST).json(error.message);
-       }
+        }
     },
 
-    createUser: (req, res) => {
-       try {
-           const {preferL = 'en'} = req.body;
+    createUser: async (req, res) => {
+        try {
+            const {
+                email, nickname, password, preferL = 'en'
+            } = req.body;
+            const userBody = { email, nickname, password };
 
-            userService.createUser(req.body);
+            await userService.createUser(userBody, preferL);
 
             res.status(errorCodes.OK).json(errorMessages.USERS_IS_CCREATED[preferL]);
-       } catch (error) {
+        } catch (error) {
             res.status(errorCodes.BAD_REQUEST).json(error.message);
-       }
+        }
     },
 
-    deleteUser: (req, res) => {
+    deleteUser: async (req, res) => {
         try {
-            const {preferL = 'en'} = req.body;
-            const {userId} = req.params;
+            const { preferL = 'en' } = req.body;
+            const { userId } = req.params;
 
-            userService.deleteUser(userId);
+           await userService.deleteUser(userId);
 
             res.status(errorCodes.OK).json(errorMessages.USER_IS_DELETE[preferL]);
         } catch (error) {
@@ -48,4 +56,4 @@ module.exports = {
         }
     }
 
-}
+};
