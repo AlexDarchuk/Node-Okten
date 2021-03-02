@@ -6,8 +6,6 @@ router.get('/', userController.getAllUsers);
 
 router.get('/:userId', userController.getOneUser);
 
-// router.post('/', userMiddleware.isUserValid, userController.createUser);
-
 router.post('/', userController.createUser);
 
 router.delete('/:userId', userController.deleteUser);
