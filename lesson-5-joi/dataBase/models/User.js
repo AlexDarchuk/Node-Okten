@@ -1,8 +1,10 @@
 const { Schema, model } = require('mongoose');
+const { dataTable: { USER } } = require('../../constant');
 
 const userScheme = new Schema({
   name: { type: String, required: true },
   age: { type: Number, default: 15 },
+  email: { type: String, required: true },
   password: { type: String },
   cars: [{ type: Schema.Types.Mixed }]
 }, { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } });
@@ -24,4 +26,4 @@ userScheme.pre('find', function() {
     this.populate('userCars');
 });
 
-module.exports = model('User', userScheme);
+module.exports = model(USER, userScheme);

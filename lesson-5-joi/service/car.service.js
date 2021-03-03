@@ -7,5 +7,5 @@ module.exports = {
 
     createCar: (carBody) => Car.create(carBody),
 
-    deleteCar: (carId) => Car.deleteOne({ _id: carId })
+    deleteCar: (carId) => Car.findByIdAndRemove(carId)
 };

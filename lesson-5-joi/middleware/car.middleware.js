@@ -4,9 +4,9 @@ const { carValidators, carIdValidator } = require('../validator');
 module.exports = {
     checkIsIdCarValid: (req, res, next) => {
         try {
-            const { userId } = req.params;
+            const { carId } = req.params;
 
-            const { error } = carIdValidator.createIdCarValidators.validate(userId);
+            const { error } = carIdValidator.createIdCarValidators.validate(carId);
 
             if (error) {
                 throw new Error(error.details[0].message);

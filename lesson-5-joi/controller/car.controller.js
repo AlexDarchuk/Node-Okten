@@ -1,4 +1,4 @@
-const carService = require('../service/car.service');
+const { carService } = require('../service');
 const { errorCode } = require('../constant');
 const { errorCar } = require('../error');
 

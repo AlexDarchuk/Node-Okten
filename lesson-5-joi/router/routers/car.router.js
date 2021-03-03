@@ -1,16 +1,16 @@
 const router = require('express').Router();
-const carController = require('../../controller/car.controller');
+const { carController } = require('../../controller');
 
-// const { carMiddeleware } = require('../../middleware');
+const { carMiddelewares } = require('../../middleware');
 
-router.get('/', carController.getAllCars);
+router.get('/', carMiddelewares.isCarValid, carController.getAllCars);
 
-router.get('/:carId', carController.getOneCar);
+router.get('/:carId', carMiddelewares.checkIsIdCarValid, carController.getOneCar);
 
 // router.post('/', carMiddleware.isCarValid, carController.createCar);
 
-router.post('/', carController.createCar);
+router.post('/', carMiddelewares.isCarValid, carController.createCar);
 
-router.delete('/:carId', carController.deleteCar);
+router.delete('/:carId', carMiddelewares.checkIsIdCarValid, carController.deleteCar);
 
 module.exports = router;
